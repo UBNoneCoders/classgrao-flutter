@@ -20,7 +20,7 @@ class AuthRepository {
   Future<Result<AuthResponse>> login(LoginRequest request) async {
     try {
       final response = await _dio.post(
-        '/auth/login',
+        '/login',
         data: request.toJson(),
       );
 
@@ -49,7 +49,7 @@ class AuthRepository {
   Future<Result<Nil>> logout(String token) async {
     try {
       await _dio.post(
-        '/auth/logout',
+        '/logout',
         options: Options(
           headers: {
             'Authorization': token,

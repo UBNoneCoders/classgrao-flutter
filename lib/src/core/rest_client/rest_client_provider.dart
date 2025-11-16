@@ -1,6 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:classgrao/src/core/config/env.dart';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 part 'rest_client_provider.g.dart';
 
@@ -15,7 +16,29 @@ Dio restClient(Ref ref) {
   );
 
   dio.options.headers['Content-Type'] = 'application/json';
-  dio.interceptors.addAll([
+
+  dio.interceptors.add(
+    InterceptorsWrapper(
+      onRequest: (options, handler) async {
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          final token = prefs.getString(
+            'auth_token',
+          );
+
+          if (token != null && token.isNotEmpty) {
+            options.headers['Authorization'] = token;
+          }
+        } catch (e) {
+          print('Erro ao pegar token: $e');
+        }
+
+        handler.next(options);
+      },
+    ),
+  );
+
+  dio.interceptors.add(
     LogInterceptor(
       request: true,
       requestHeader: true,
@@ -23,7 +46,7 @@ Dio restClient(Ref ref) {
       responseBody: true,
       error: true,
     ),
-  ]);
+  );
 
   return dio;
 }

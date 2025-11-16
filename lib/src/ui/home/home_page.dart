@@ -1,4 +1,9 @@
+import 'package:classgrao/src/core/widgets/analysis_list.dart';
+import 'package:classgrao/src/core/widgets/app_bottom_navigate.dart';
+import 'package:classgrao/src/core/widgets/home_app_bar.dart';
+import 'package:classgrao/src/core/widgets/search_bar_widget.dart';
 import 'package:classgrao/src/data/services/auth/auth_service.dart';
+import 'package:classgrao/src/ui/home/home_view_model.dart';
 import 'package:classgrao/src/ui/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -11,14 +16,9 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Future<void> _handleLogout() async {
     final authService = ref.read(authServiceProvider);
-    final result = await authService.logout();
+    await authService.logout();
 
     ref.invalidate(isAuthenticatedProvider);
     ref.invalidate(currentUserProvider);
@@ -33,85 +33,32 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserAsync = ref.watch(currentUserProvider);
-    final authService = ref.read(authServiceProvider);
+    final classificationsAsync = ref.watch(homeViewModelProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pesquisar Domínio'),
-        foregroundColor: Colors.black,
-        elevation: 1, // Sombra leve
-        actions: [
-          IconButton(
-            tooltip: 'Logout',
-            onPressed: _handleLogout,
-            icon: const Icon(Icons.logout),
-          ),
-        ],
+      backgroundColor: const Color(0xFFF5F5F5),
+      appBar: HomeAppBar(onLogout: _handleLogout),
+      bottomNavigationBar: const AppBottomNavigationBar(
+        currentIndex: 0,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              currentUserAsync.when(
-                data: (user) {
-                  if (user == null) {
-                    return const Text('Nenhum usuário autenticado.');
-                  }
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Usuário autenticado:',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      Text('ID: ${user.id}'),
-                      Text('Nome: ${user.name}'),
-                      Text('Username: ${user.username}'),
-                      Text('Role: ${user.role}'),
-                      Text('Ativo: ${user.active}'),
-                      const SizedBox(height: 12),
-                      FutureBuilder<String?>(
-                        future: authService.getToken(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return const Text('Carregando token...');
-                          }
-                          if (snapshot.hasError) {
-                            return Text(
-                              'Erro ao carregar token: ${snapshot.error}',
-                            );
-                          }
-                          final token = snapshot.data;
-                          return SelectableText(
-                            'Token: ${token ?? "não disponível"}',
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 32),
-                    ],
-                  );
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, st) => Text('Erro ao obter usuário: $err'),
+      body: classificationsAsync.when(
+        data: (classifications) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SearchBarWidget(),
+                  const SizedBox(height: 24),
+                  AnalysisList(classifications: classifications),
+                ],
               ),
-              Center(
-                child: Text(
-                  'Página Home - Em construção',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    color: Colors.black87,
-                    fontWeight: FontWeight.w500,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, st) => Center(child: Text('Erro: $e')),
       ),
     );
   }
