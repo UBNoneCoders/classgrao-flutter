@@ -193,12 +193,10 @@ class _ClassificationFormPageState
                 errorText: _imageError,
               ),
               const SizedBox(height: 24),
-              TextFormField(
+              AppTextField(
                 controller: _titleController,
-                decoration: const InputDecoration(
-                  labelText: 'Título da Análise *',
-                  hintText: 'Digite o título',
-                ),
+                label: 'Título da Análise *',
+                hint: 'Digite o título',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira um título';
