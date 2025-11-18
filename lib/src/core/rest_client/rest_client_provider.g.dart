@@ -47,4 +47,4 @@ final class RestClientProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$restClientHash() => r'12b394fa11a29c64d8974d972ffe598adc66ac12';
+String _$restClientHash() => r'1874e1f049dec51b2363be75c678bc12d2cfb685';

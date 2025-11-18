@@ -1,5 +1,6 @@
 import 'package:classgrao/src/auth_wrapper.dart';
 import 'package:classgrao/src/data/services/auth/auth_service.dart';
+import 'package:classgrao/src/ui/account/account_page.dart';
 import 'package:classgrao/src/ui/classification_form/classification_form_page.dart';
 import 'package:classgrao/src/ui/home/home_page.dart';
 import 'package:classgrao/src/ui/login/login_page.dart';
@@ -39,7 +40,7 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
         '/login': (_) => const LoginPage(),
         '/home': (_) => const HomePage(),
         '/classification-form': (_) => const ClassificationFormPage(),
-        '/account': (_) => const ClassificationFormPage(),
+        '/account': (_) => const AccountPage(),
       },
     );
   }

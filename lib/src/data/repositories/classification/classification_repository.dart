@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -57,12 +59,17 @@ class ClassificationRepository {
 
   Future<Result<ClassificationModel>> classifyGrain(
     Map<String, dynamic> body,
-    String imagePath,
+    Uint8List imageBytes,
+    String imageName,
   ) async {
     try {
       final form = FormData.fromMap({
-        ...body,
-        "file": await MultipartFile.fromFile(imagePath),
+        'title': body['title'],
+        'description': body['description'],
+        'image': MultipartFile.fromBytes(
+          imageBytes,
+          filename: imageName,
+        ),
       });
 
       final response = await _dio.post('/classifications', data: form);

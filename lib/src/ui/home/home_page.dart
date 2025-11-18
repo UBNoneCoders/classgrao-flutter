@@ -31,6 +31,12 @@ class _HomePageState extends ConsumerState<HomePage> {
     }
   }
 
+  Future<void> _handleRefresh() async {
+    ref.invalidate(homeViewModelProvider);
+
+    await ref.read(homeViewModelProvider.future);
+  }
+
   @override
   Widget build(BuildContext context) {
     final classificationsAsync = ref.watch(homeViewModelProvider);
@@ -43,22 +49,37 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       body: classificationsAsync.when(
         data: (classifications) {
-          return SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const SearchBarWidget(),
-                  const SizedBox(height: 24),
-                  AnalysisList(classifications: classifications),
-                ],
+          return RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SearchBarWidget(),
+                    const SizedBox(height: 24),
+                    AnalysisList(classifications: classifications),
+                  ],
+                ),
               ),
             ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, st) => Center(child: Text('Erro: $e')),
+        error: (e, st) => Center(
+          child: RefreshIndicator(
+            onRefresh: _handleRefresh,
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height - 200,
+                child: Center(child: Text('Erro: $e')),
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }

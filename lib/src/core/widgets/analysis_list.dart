@@ -45,6 +45,7 @@ class AnalysisList extends StatelessWidget {
               arguments: analysis,
             );
           },
+          imagePath: analysis.imagePath ?? '',
         );
       }).toList(),
     );

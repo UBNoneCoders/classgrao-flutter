@@ -2,6 +2,7 @@ import 'package:classgrao/src/core/result/result.dart';
 import 'package:classgrao/src/data/models/classification_model.dart';
 import 'package:classgrao/src/data/repositories/classification/classification_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'dart:typed_data';
 
 part 'classification_service.g.dart';
 
@@ -25,9 +26,10 @@ class ClassificationService {
 
   Future<Result<ClassificationModel>> classifyGrain({
     required Map<String, dynamic> data,
-    required String imagePath,
+    required Uint8List imageBytes,
+    required String imageName,
   }) async {
-    return await _repo.classifyGrain(data, imagePath);
+    return await _repo.classifyGrain(data, imageBytes, imageName);
   }
 
   Future<Result<Nil>> deleteClassification(int id) async {

@@ -1,3 +1,4 @@
+import 'package:classgrao/src/core/config/env.dart';
 import 'package:flutter/material.dart';
 
 class AnalysisCard extends StatelessWidget {
@@ -5,6 +6,7 @@ class AnalysisCard extends StatelessWidget {
   final String date;
   final String status;
   final VoidCallback onTap;
+  final String imagePath;
 
   const AnalysisCard({
     super.key,
@@ -12,7 +14,13 @@ class AnalysisCard extends StatelessWidget {
     required this.date,
     required this.status,
     required this.onTap,
+    required this.imagePath,
   });
+
+  String get imageUrl {
+    final url = '${Env.supabaseUrl}/storage/v1/object/public/$imagePath';
+    return url;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,13 +43,24 @@ class AnalysisCard extends StatelessWidget {
                     color: Colors.grey.shade200,
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(
-                    Icons.image_outlined,
-                    color: Colors.grey,
-                    size: 28,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return const Icon(
+                          Icons.image_outlined,
+                          color: Colors.grey,
+                          size: 28,
+                        );
+                      },
+                    ),
                   ),
                 ),
+
                 const SizedBox(width: 16),
+
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
