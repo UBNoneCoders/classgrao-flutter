@@ -1,42 +1,39 @@
-import 'package:dio/dio.dart';
 import 'package:classgrao/src/core/exceptions/app_exception.dart';
 import 'package:classgrao/src/core/rest_client/rest_client_provider.dart';
 import 'package:classgrao/src/core/result/result.dart';
-import 'package:classgrao/src/data/models/auth_model.dart';
+import 'package:classgrao/src/data/models/audit_model.dart';
+import 'package:dio/dio.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'auth_repository.g.dart';
+part 'audit_repository.g.dart';
 
 @riverpod
-AuthRepository authRepository(Ref ref) {
-  return AuthRepository(ref.read(restClientProvider));
+AuditRepository auditRepository(Ref ref) {
+  return AuditRepository(ref.read(restClientProvider));
 }
 
-class AuthRepository {
+class AuditRepository {
   final Dio _dio;
 
-  AuthRepository(this._dio);
+  AuditRepository(this._dio);
 
-  Future<Result<AuthResponse>> login(LoginRequest request) async {
+  Future<Result<List<AuditLogModel>>> getAuditLogs() async {
     try {
-      final response = await _dio.post(
-        '/login',
-        data: request.toJson(),
-      );
+      final response = await _dio.get('/audits');
 
       if (response.statusCode == 200) {
-        final authResponse = AuthResponse.fromJson(response.data);
+        final auditResponse = AuditResponse.fromJson(response.data);
 
-        if (!authResponse.status) {
+        if (!auditResponse.status) {
           return Failure(
-            AppException(authResponse.message),
+            AppException(auditResponse.message),
           );
         }
 
-        return Success(authResponse);
+        return Success(auditResponse.data.auditLogs);
       } else {
         return Failure(
-          AppException('Erro ao fazer login'),
+          AppException('Erro ao buscar logs de auditoria'),
         );
       }
     } on DioException catch (e) {
@@ -46,30 +43,13 @@ class AuthRepository {
     }
   }
 
-  Future<Result<Nil>> logout(String token) async {
-    try {
-      await _dio.post(
-        '/logout',
-        options: Options(
-          headers: {
-            'Authorization': token,
-          },
-        ),
-      );
-      return successOfNil();
-    } on DioException catch (e) {
-      print('Erro ao fazer logout no servidor: $e');
-      return successOfNil();
-    } catch (e) {
-      return successOfNil();
-    }
-  }
-
   AppException _handleDioError(DioException e) {
     if (e.response?.statusCode == 401) {
-      return AppException('Credenciais inválidas');
+      return AppException('Não autorizado');
+    } else if (e.response?.statusCode == 403) {
+      return AppException('Acesso negado');
     } else if (e.response?.statusCode == 404) {
-      return AppException('Usuário não encontrado');
+      return AppException('Recurso não encontrado');
     } else if (e.response?.statusCode == 500) {
       return AppException('Erro no servidor. Tente novamente mais tarde');
     } else if (e.type == DioExceptionType.connectionTimeout) {
@@ -79,6 +59,15 @@ class AuthRepository {
     } else if (e.type == DioExceptionType.receiveTimeout) {
       return AppException('Tempo de resposta esgotado');
     }
+
+    // Tenta extrair mensagem de erro da resposta
+    if (e.response?.data != null && e.response?.data is Map) {
+      final message = e.response?.data['message'];
+      if (message != null) {
+        return AppException(message.toString());
+      }
+    }
+
     return AppException('Erro de conexão: ${e.message}');
   }
 }

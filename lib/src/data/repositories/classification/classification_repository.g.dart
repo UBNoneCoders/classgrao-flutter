@@ -55,4 +55,4 @@ final class ClassificationRepositoryProvider
 }
 
 String _$classificationRepositoryHash() =>
-    r'c011d364a207ff47e2c86102b63463189cde45e4';
+    r'91429c49ded47091e9bc1a7d487b1742c7748557';

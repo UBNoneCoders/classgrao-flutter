@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:classgrao/src/core/widgets/app_bottom_navigate.dart';
 import 'package:classgrao/src/core/widgets/app_button.dart';
 import 'package:classgrao/src/core/widgets/app_image_upload.dart';
 import 'package:classgrao/src/core/widgets/app_input.dart';
@@ -147,16 +148,13 @@ class _ClassificationFormPageState
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context),
-        ),
+        automaticallyImplyLeading: false,
         title: const Text(
-          'Formulário de Nova Classificação',
+          'Nova Classificação',
           style: TextStyle(
             color: Colors.black87,
-            fontSize: 16,
-            fontWeight: FontWeight.w500,
+            fontSize: 20,
+            fontWeight: FontWeight.w600,
           ),
         ),
       ),
@@ -231,6 +229,7 @@ class _ClassificationFormPageState
           ),
         ),
       ),
+      bottomNavigationBar: const AppBottomNavigationBar(currentIndex: 1),
     );
   }
 }

@@ -1,7 +1,6 @@
 import 'package:classgrao/src/core/widgets/analysis_list.dart';
 import 'package:classgrao/src/core/widgets/app_bottom_navigate.dart';
 import 'package:classgrao/src/core/widgets/home_app_bar.dart';
-import 'package:classgrao/src/core/widgets/search_bar_widget.dart';
 import 'package:classgrao/src/data/services/auth/auth_service.dart';
 import 'package:classgrao/src/ui/home/home_view_model.dart';
 import 'package:classgrao/src/ui/login/login_page.dart';
@@ -32,9 +31,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 
   Future<void> _handleRefresh() async {
-    ref.invalidate(homeViewModelProvider);
-
-    await ref.read(homeViewModelProvider.future);
+    ref.refresh(homeViewModelProvider);
   }
 
   @override
@@ -58,8 +55,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const SearchBarWidget(),
-                    const SizedBox(height: 24),
                     AnalysisList(classifications: classifications),
                   ],
                 ),

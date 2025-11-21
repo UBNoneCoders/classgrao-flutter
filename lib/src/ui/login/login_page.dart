@@ -43,7 +43,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('Bem-vindo, ${authResponse.data.user.name}!'),
-                  backgroundColor: Colors.white,
+                  backgroundColor: Colors.green,
                 ),
               );
 

@@ -11,7 +11,7 @@ part 'classification_repository.g.dart';
 
 @riverpod
 ClassificationRepository classificationRepository(Ref ref) {
-  final dio = ref.watch(restClientProvider)!;
+  final dio = ref.read(restClientProvider);
   return ClassificationRepository(dio);
 }
 

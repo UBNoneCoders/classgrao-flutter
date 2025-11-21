@@ -57,27 +57,26 @@ class AppBottomNavigationBar extends StatelessWidget {
   }
 
   void _handleNavigation(BuildContext context, int index) {
-    // Remove todas as rotas anteriores e navega para a nova
     switch (index) {
       case 0:
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/home',
-          (route) => route.settings.name == '/auth' || route.isFirst,
+          (route) => false,
         );
         break;
       case 1:
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/classification-form',
-          (route) => route.settings.name == '/auth' || route.isFirst,
+          (route) => false,
         );
         break;
       case 2:
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/account',
-          (route) => route.settings.name == '/auth' || route.isFirst,
+          (route) => false,
         );
         break;
     }

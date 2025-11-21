@@ -7,6 +7,7 @@ class ClassificationModel {
   final int? userId;
   final bool? hasClassificated;
   final ClassificationResult? result;
+  final String? resultImagePath;
 
   ClassificationModel({
     required this.id,
@@ -17,6 +18,7 @@ class ClassificationModel {
     this.userId,
     this.hasClassificated,
     this.result,
+    this.resultImagePath,
   });
 
   factory ClassificationModel.fromJson(Map<String, dynamic> json) {
@@ -33,35 +35,39 @@ class ClassificationModel {
       result: json['result'] != null
           ? ClassificationResult.fromJson(json['result'])
           : null,
+      resultImagePath: json['result_image_path'],
     );
   }
 }
 
 class ClassificationResult {
   final int totalGrains;
-  final int totalImpurities;
-  final double impuritiesPercentage;
+  final int goodGrains;
+  final int badGrains;
+  final double goodGrainsPercentage;
   final double averageArea;
   final double averageCircularity;
-  final List<double> averageColorBgr;
+  final List<double> averageColor;
 
   ClassificationResult({
     required this.totalGrains,
-    required this.totalImpurities,
-    required this.impuritiesPercentage,
+    required this.goodGrains,
+    required this.badGrains,
+    required this.goodGrainsPercentage,
     required this.averageArea,
     required this.averageCircularity,
-    required this.averageColorBgr,
+    required this.averageColor,
   });
 
   factory ClassificationResult.fromJson(Map<String, dynamic> json) {
     return ClassificationResult(
       totalGrains: json['total_grains'],
-      totalImpurities: json['total_impurities'],
-      impuritiesPercentage: (json['impurities_percentage'] as num).toDouble(),
+      goodGrains: json['good_grains'],
+      badGrains: json['bad_grains'],
+      goodGrainsPercentage: (json['good_grains_percentage'] as num).toDouble(),
       averageArea: (json['average_area'] as num).toDouble(),
       averageCircularity: (json['average_circularity'] as num).toDouble(),
-      averageColorBgr: (json['average_color_bgr'] as List)
+      averageColor: (json['average_color'] as List)
           .map((e) => (e as num).toDouble())
           .toList(),
     );

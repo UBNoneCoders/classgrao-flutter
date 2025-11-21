@@ -11,19 +11,19 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.lightGreen[100],
+      backgroundColor: const Color(0xFF00695C),
       elevation: 0,
       title: const Text(
         'ClassGrão',
         style: TextStyle(
-          color: Colors.black,
+          color: Colors.white,
           fontSize: 30,
           fontWeight: FontWeight.bold,
         ),
       ),
       actions: [
         IconButton(
-          icon: const Icon(Icons.logout, color: Colors.grey),
+          icon: const Icon(Icons.logout, color: Colors.white),
           onPressed: onLogout,
           tooltip: 'Sair',
         ),

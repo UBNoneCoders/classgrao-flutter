@@ -31,21 +31,21 @@ class AnalysisList extends StatelessWidget {
 
   Widget _buildAnalysisList(BuildContext context) {
     return Column(
-      children: classifications.map((analysis) {
+      children: classifications.map((classification) {
         return AnalysisCard(
-          title: analysis.title,
-          date: analysis.createdAt?.toString().substring(0, 10) ?? 'Sem data',
-          status: analysis.hasClassificated == true
+          title: classification.title,
+          date: classification.createdAt?.toString().substring(0, 10) ?? 'Sem data',
+          status: classification.hasClassificated == true
               ? "Classificada"
               : "Pendente",
           onTap: () {
             Navigator.pushNamed(
               context,
-              '/analysis-details',
-              arguments: analysis,
+              '/classification-details',
+              arguments: classification,
             );
           },
-          imagePath: analysis.imagePath ?? '',
+          imagePath: classification.imagePath ?? '',
         );
       }).toList(),
     );

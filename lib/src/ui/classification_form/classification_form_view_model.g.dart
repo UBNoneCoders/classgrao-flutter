@@ -47,7 +47,7 @@ final class ClassificationFormViewModelProvider
 }
 
 String _$classificationFormViewModelHash() =>
-    r'37032a335732527f0f995d427b3e06c664611631';
+    r'431dc76fe466d44e77dc5b632aa1a3a31245695a';
 
 abstract class _$ClassificationFormViewModel
     extends $Notifier<ClassificationFormState> {
