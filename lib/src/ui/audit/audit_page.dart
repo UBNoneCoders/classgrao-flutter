@@ -23,8 +23,6 @@ class _AuditPageState extends ConsumerState<AuditPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Auditoria do Sistema'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
         actions: [
           PopupMenuButton<String>(

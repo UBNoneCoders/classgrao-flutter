@@ -146,15 +146,13 @@ class _ClassificationFormPageState
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Colors.white,
         elevation: 0,
         automaticallyImplyLeading: false,
         title: const Text(
           'Nova Classificação',
           style: TextStyle(
-            color: Colors.black87,
+            color: Colors.white,
             fontSize: 20,
-            fontWeight: FontWeight.w600,
           ),
         ),
       ),

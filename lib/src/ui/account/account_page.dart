@@ -1,3 +1,4 @@
+import 'package:classgrao/src/core/result/result.dart';
 import 'package:classgrao/src/core/widgets/app_bottom_navigate.dart';
 import 'package:classgrao/src/data/services/auth/auth_service.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +14,8 @@ class AccountPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Minha Conta'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
+        backgroundColor: const Color(0xFF00695C),
+        foregroundColor: Colors.white,
         elevation: 0,
       ),
       body: userAsync.when(
@@ -60,7 +61,6 @@ class AccountPage extends ConsumerWidget {
                   ],
                 ),
                 const SizedBox(height: 40),
-
                 if (user.role == 'ADMIN') ...[
                   _buildMenuItem(
                     context,
@@ -93,6 +93,13 @@ class AccountPage extends ConsumerWidget {
                     textColor: Colors.red,
                   ),
                 ],
+                _buildMenuItem(
+                  context,
+                  'Sair',
+                  Icons.logout,
+                  () => _showLogoutConfirmation(context, ref),
+                  textColor: Colors.red,
+                ),
               ],
             ),
           );
@@ -159,18 +166,66 @@ class AccountPage extends ConsumerWidget {
             ),
             TextButton(
               onPressed: () async {
-                // Navigator.pop(dialogContext);
-                // await ref.read(authServiceProvider)
-                // if (context.mounted) {
-                //   ScaffoldMessenger.of(context).showSnackBar(
-                //     const SnackBar(
-                //       content: Text('Conta deletada com sucesso'),
-                //     ),
-                //   );
-                // }
+                Navigator.pop(dialogContext);
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Deletar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showLogoutConfirmation(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Confirmar Saída'),
+          content: const Text(
+            'Tem certeza que deseja sair da sua conta?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
+
+                final authService = ref.read(authServiceProvider);
+                final result = await authService.logout();
+
+                if (!context.mounted) return;
+
+                switch (result) {
+                  case Success():
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Logout realizado com sucesso'),
+                        backgroundColor: Colors.green,
+                      ),
+                    );
+                    Navigator.pushNamedAndRemoveUntil(
+                      context,
+                      '/auth/login',
+                      (route) => false,
+                    );
+                  case Failure(:final error):
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Falha ao fazer logout'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                }
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF00695C),
+              ),
+              child: const Text('Sair'),
             ),
           ],
         );

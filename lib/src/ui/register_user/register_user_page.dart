@@ -30,8 +30,6 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Cadastro'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: SingleChildScrollView(

@@ -15,8 +15,6 @@ class UsersPage extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Usuários'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
         actions: [
           IconButton(
