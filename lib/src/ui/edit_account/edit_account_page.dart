@@ -44,8 +44,6 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Editar Conta'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
         elevation: 0,
       ),
       body: SingleChildScrollView(
