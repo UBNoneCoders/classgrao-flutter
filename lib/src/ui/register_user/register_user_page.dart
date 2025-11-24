@@ -1,3 +1,5 @@
+import 'package:classgrao/src/core/widgets/app_button.dart';
+import 'package:classgrao/src/core/widgets/app_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -14,7 +16,6 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  String _selectedRole = 'FARMER';
 
   @override
   void dispose() {
@@ -44,12 +45,10 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
                 style: TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 24),
-              TextFormField(
+              AppTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome do Usuário *',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Nome do Usuário *',
+                hint: 'Digite o nome completo',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira o nome';
@@ -58,12 +57,10 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Usuário *',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Usuário *',
+                hint: 'Digite o nome de usuário',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira o usuário';
@@ -72,12 +69,10 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Senha *',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Senha *',
+                hint: 'Digite a senha',
                 obscureText: true,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -90,12 +85,10 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirmar Senha *',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Confirmar Senha *',
+                hint: 'Digite a senha novamente',
                 obscureText: true,
                 validator: (value) {
                   if (value != _passwordController.text) {
@@ -105,19 +98,9 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
                 },
               ),
               const SizedBox(height: 32),
-              ElevatedButton(
+              AppButton(
+                label: 'Cadastrar Usuário',
                 onPressed: _registerUser,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00695C),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Cadastrar Usuário',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
               ),
             ],
           ),
@@ -128,9 +111,6 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
 
   void _registerUser() async {
     if (_formKey.currentState!.validate()) {
-      // Aqui você chamaria o método para registrar o usuário
-      // await ref.read(authServiceProvider).registerUser(...);
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Usuário cadastrado com sucesso')),
       );

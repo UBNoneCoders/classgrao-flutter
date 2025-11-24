@@ -1,20 +1,21 @@
 import 'package:classgrao/src/core/result/result.dart';
+import 'package:classgrao/src/core/widgets/app_button.dart';
+import 'package:classgrao/src/core/widgets/app_input.dart';
 import 'package:classgrao/src/data/models/user_model.dart';
-import 'package:classgrao/src/ui/edit_account/edit_account_view_model.dart';
-import 'package:classgrao/src/ui/users_page/users_view_model.dart';
+import 'package:classgrao/src/ui/edit_user/edit_user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class EditAccountPage extends ConsumerStatefulWidget {
+class EditUserPage extends ConsumerStatefulWidget {
   final UserModel user;
 
-  const EditAccountPage({super.key, required this.user});
+  const EditUserPage({super.key, required this.user});
 
   @override
-  ConsumerState<EditAccountPage> createState() => _EditAccountPageState();
+  ConsumerState<EditUserPage> createState() => _EditUserPageState();
 }
 
-class _EditAccountPageState extends ConsumerState<EditAccountPage> {
+class _EditUserPageState extends ConsumerState<EditUserPage> {
   final _formKey = GlobalKey<FormState>();
   late TextEditingController _nameController;
   late TextEditingController _usernameController;
@@ -43,7 +44,7 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Editar Conta'),
+        title: const Text('Editar Usuário'),
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -53,12 +54,10 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              TextFormField(
+              AppTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nome do Usuário',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Nome do Usuário',
+                hint: 'Digite o nome completo',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira o nome';
@@ -67,12 +66,10 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _usernameController,
-                decoration: const InputDecoration(
-                  labelText: 'Usuário',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Usuário',
+                hint: 'Digite o nome de usuário',
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Por favor, insira o usuário';
@@ -81,21 +78,17 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
                 },
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _passwordController,
-                decoration: const InputDecoration(
-                  labelText: 'Senha (deixe em branco para não alterar)',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Senha (deixe em branco para não alterar)',
+                hint: 'Digite a nova senha',
                 obscureText: true,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              AppTextField(
                 controller: _confirmPasswordController,
-                decoration: const InputDecoration(
-                  labelText: 'Confirmar Senha',
-                  border: OutlineInputBorder(),
-                ),
+                label: 'Confirmar Senha',
+                hint: 'Digite a senha novamente',
                 obscureText: true,
                 validator: (value) {
                   if (_passwordController.text.isNotEmpty) {
@@ -110,19 +103,9 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
                 },
               ),
               const SizedBox(height: 32),
-              ElevatedButton(
+              AppButton(
+                label: 'Salvar Alterações',
                 onPressed: _saveChanges,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFF00695C),
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: const Text(
-                  'Salvar Alterações',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
               ),
             ],
           ),
@@ -133,7 +116,6 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
 
   void _saveChanges() async {
     if (_formKey.currentState!.validate()) {
-      // Mostra loading
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -143,7 +125,7 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
       );
 
       final result = await ref
-          .read(editAccountViewModelProvider.notifier)
+          .read(editUserViewModelProvider.notifier)
           .updateUser(
             id: widget.user.id,
             name: _nameController.text,
@@ -153,7 +135,6 @@ class _EditAccountPageState extends ConsumerState<EditAccountPage> {
                 : _passwordController.text,
           );
 
-      // Remove loading
       if (context.mounted) {
         Navigator.pop(context);
 

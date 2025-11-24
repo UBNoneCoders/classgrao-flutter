@@ -3,10 +3,10 @@ import 'package:classgrao/src/data/models/user_model.dart';
 import 'package:classgrao/src/data/services/user/user_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'edit_account_view_model.g.dart';
+part 'edit_user_view_model.g.dart';
 
 @riverpod
-class EditAccountViewModel extends _$EditAccountViewModel {
+class EditUserViewModel extends _$EditUserViewModel {
   @override
   FutureOr<void> build() {}
 

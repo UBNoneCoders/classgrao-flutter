@@ -37,7 +37,7 @@ class _AuditPageState extends ConsumerState<AuditPage> {
                 value: 'all',
                 child: Row(
                   children: [
-                    Icon(Icons.all_inclusive, size: 20),
+                    Icon(Icons.all_inclusive, size: 20, color: Colors.green),
                     SizedBox(width: 8),
                     Text('Todos'),
                   ],
@@ -47,7 +47,7 @@ class _AuditPageState extends ConsumerState<AuditPage> {
                 value: 'auth',
                 child: Row(
                   children: [
-                    Icon(Icons.login, size: 20),
+                    Icon(Icons.login, size: 20, color: Color(0xFF6A1B9A)),
                     SizedBox(width: 8),
                     Text('Autenticação'),
                   ],
@@ -57,7 +57,7 @@ class _AuditPageState extends ConsumerState<AuditPage> {
                 value: 'user',
                 child: Row(
                   children: [
-                    Icon(Icons.person, size: 20),
+                    Icon(Icons.person, size: 20, color: Color(0xFF1E88E5)),
                     SizedBox(width: 8),
                     Text('Usuários'),
                   ],
@@ -67,7 +67,7 @@ class _AuditPageState extends ConsumerState<AuditPage> {
                 value: 'classification',
                 child: Row(
                   children: [
-                    Icon(Icons.analytics, size: 20),
+                    Icon(Icons.analytics, size: 20, color: Color(0xFF00897B)),
                     SizedBox(width: 8),
                     Text('Classificações'),
                   ],
@@ -106,7 +106,6 @@ class _AuditPageState extends ConsumerState<AuditPage> {
   }
 
   Widget _buildAuditList(BuildContext context, List<AuditLogModel> logs) {
-    // Aplica filtro
     List<AuditLogModel> filteredLogs = logs;
     if (_selectedFilter != 'all') {
       filteredLogs = ref
@@ -114,10 +113,8 @@ class _AuditPageState extends ConsumerState<AuditPage> {
           .filterByCategory(logs, _selectedFilter);
     }
 
-    // Ordena por data decrescente (mais recente primeiro)
     filteredLogs.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
-    // Agrupa por data
     final groupedLogs = ref
         .read(auditServiceProvider)
         .groupByDate(filteredLogs);
@@ -259,45 +256,53 @@ class _AuditPageState extends ConsumerState<AuditPage> {
     IconData icon;
     Color color;
 
+    const authColor = Color(0xFF6A1B9A);
+    const userColor = Color(0xFF1E88E5);
+    const classificationColor = Color(0xFF00897B);
+    const defaultColor = Colors.grey;
+
     switch (log.actionCategory) {
       case 'auth':
         icon = log.isSuccess ? Icons.login : Icons.lock_outline;
-        color = log.isSuccess ? Colors.green : Colors.orange;
+        color = authColor;
         break;
+
       case 'classification':
         icon = Icons.analytics;
-        color = Colors.blue;
+        color = classificationColor;
         break;
+
       case 'user':
         if (log.action.contains('DELETE')) {
           icon = Icons.person_remove;
-          color = Colors.red;
         } else if (log.action.contains('CREATE')) {
           icon = Icons.person_add;
-          color = Colors.green;
         } else if (log.action.contains('DEACTIVATE')) {
           icon = Icons.block;
-          color = Colors.orange;
         } else if (log.action.contains('ACTIVATE')) {
           icon = Icons.check_circle;
-          color = Colors.green;
         } else {
           icon = Icons.edit;
-          color = Colors.blue;
         }
+        color = userColor;
         break;
+
       default:
         icon = Icons.info_outline;
-        color = Colors.grey;
+        color = defaultColor;
     }
 
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withOpacity(0.12),
         borderRadius: BorderRadius.circular(8),
       ),
-      child: Icon(icon, color: color, size: 24),
+      child: Icon(
+        icon,
+        color: color,
+        size: 24,
+      ),
     );
   }
 

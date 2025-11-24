@@ -81,7 +81,7 @@ class AccountPage extends ConsumerWidget {
                     Icons.edit,
                     () => Navigator.pushNamed(
                       context,
-                      '/edit-account',
+                      '/edit-user',
                       arguments: user,
                     ),
                   ),

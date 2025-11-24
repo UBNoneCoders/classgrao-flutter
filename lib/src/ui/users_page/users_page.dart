@@ -91,7 +91,7 @@ class UsersPage extends ConsumerWidget {
           user: user,
           onEdit: () => Navigator.pushNamed(
             context,
-            '/edit-account',
+            '/edit-user',
             arguments: user,
           ),
           onToggleActive: () => _toggleUserActive(ref, user),

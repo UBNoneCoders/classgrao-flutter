@@ -6,7 +6,7 @@ import 'package:classgrao/src/ui/account/account_page.dart';
 import 'package:classgrao/src/ui/audit/audit_page.dart';
 import 'package:classgrao/src/ui/classification_details/classification_details_page.dart';
 import 'package:classgrao/src/ui/classification_form/classification_form_page.dart';
-import 'package:classgrao/src/ui/edit_account/edit_account_page.dart';
+import 'package:classgrao/src/ui/edit_user/edit_user_page.dart';
 import 'package:classgrao/src/ui/home/home_page.dart';
 import 'package:classgrao/src/ui/login/login_page.dart';
 import 'package:classgrao/src/ui/register_user/register_user_page.dart';
@@ -59,9 +59,9 @@ class _AppWidgetState extends ConsumerState<AppWidget> {
           return ClassificationDetailsPage(classification: classification);
         },
         '/account': (_) => const AccountPage(),
-        '/edit-account': (context) {
+        '/edit-user': (context) {
           final user = ModalRoute.of(context)!.settings.arguments as UserModel;
-          return EditAccountPage(user: user);
+          return EditUserPage(user: user);
         },
         '/users': (_) => const UsersPage(),
         '/audit': (_) => const AuditPage(),
