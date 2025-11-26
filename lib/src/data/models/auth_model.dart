@@ -1,3 +1,5 @@
+import 'package:classgrao/src/data/models/user_model.dart';
+
 class AuthResponse {
   final bool status;
   final String message;
@@ -47,58 +49,6 @@ class AuthData {
       'user': user.toJson(),
       'token': token,
     };
-  }
-}
-
-class UserModel {
-  final int id;
-  final String username;
-  final String name;
-  final String role;
-  final bool active;
-
-  UserModel({
-    required this.id,
-    required this.username,
-    required this.name,
-    required this.role,
-    required this.active,
-  });
-
-  factory UserModel.fromJson(Map<String, dynamic> json) {
-    return UserModel(
-      id: json['id'] ?? 0,
-      username: json['username'] ?? '',
-      name: json['name'] ?? '',
-      role: json['role'] ?? '',
-      active: json['active'] ?? false,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'username': username,
-      'name': name,
-      'role': role,
-      'active': active,
-    };
-  }
-
-  UserModel copyWith({
-    int? id,
-    String? username,
-    String? name,
-    String? role,
-    bool? active,
-  }) {
-    return UserModel(
-      id: id ?? this.id,
-      username: username ?? this.username,
-      name: name ?? this.name,
-      role: role ?? this.role,
-      active: active ?? this.active,
-    );
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:classgrao/src/core/result/result.dart';
 import 'package:classgrao/src/core/widgets/app_button.dart';
 import 'package:classgrao/src/core/widgets/app_input.dart';
 import 'package:classgrao/src/data/models/user_model.dart';
+import 'package:classgrao/src/data/services/auth/auth_service.dart';
 import 'package:classgrao/src/ui/edit_user/edit_user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -140,6 +141,9 @@ class _EditUserPageState extends ConsumerState<EditUserPage> {
 
         switch (result) {
           case Success():
+            // Atualiza os dados do usuário no provider
+            ref.invalidate(currentUserProvider);
+
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Conta atualizada com sucesso'),

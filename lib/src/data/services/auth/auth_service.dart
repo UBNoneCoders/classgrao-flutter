@@ -4,6 +4,7 @@ import 'package:classgrao/src/core/exceptions/app_exception.dart';
 import 'package:classgrao/src/core/rest_client/rest_client_provider.dart';
 import 'package:classgrao/src/core/result/result.dart';
 import 'package:classgrao/src/data/models/auth_model.dart';
+import 'package:classgrao/src/data/models/user_model.dart';
 import 'package:classgrao/src/data/repositories/auth/auth_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
