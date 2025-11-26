@@ -15,23 +15,57 @@ class HomePage extends ConsumerStatefulWidget {
 }
 
 class _HomePageState extends ConsumerState<HomePage> {
-  Future<void> _handleLogout() async {
-    final authService = ref.read(authServiceProvider);
-    await authService.logout();
+  void _showLogoutConfirmation(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Confirmar Saída'),
+          content: const Text(
+            'Tem certeza que deseja sair da sua conta?',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(dialogContext);
 
-    ref.invalidate(isAuthenticatedProvider);
-    ref.invalidate(currentUserProvider);
+                final authService = ref.read(authServiceProvider);
+                await authService.logout();
 
-    if (mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => const LoginPage()),
-        (route) => false,
-      );
-    }
+                ref.invalidate(isAuthenticatedProvider);
+                ref.invalidate(currentUserProvider);
+
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Sessão encerrada com sucesso!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
+
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                    (route) => false,
+                  );
+                }
+              },
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF00695C),
+              ),
+              child: const Text('Sair'),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _handleRefresh() async {
-    ref.refresh(homeViewModelProvider);
+    await ref.refresh(homeViewModelProvider.future);
   }
 
   @override
@@ -40,7 +74,7 @@ class _HomePageState extends ConsumerState<HomePage> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
-      appBar: HomeAppBar(onLogout: _handleLogout),
+      appBar: HomeAppBar(onLogout: () => _showLogoutConfirmation(context, ref)),
       bottomNavigationBar: const AppBottomNavigationBar(
         currentIndex: 0,
       ),
