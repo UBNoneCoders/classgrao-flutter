@@ -179,7 +179,55 @@ class _ClassificationFormPageState
                   color: Colors.black45,
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 24),
+              // Alerta amarelo
+              Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFFFF9C4),
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(
+                    color: const Color(0xFFFBC02D),
+                    width: 1,
+                  ),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.warning_amber_rounded,
+                      color: Color(0xFFF57F17),
+                      size: 24,
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            'Importante!',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFFF57F17),
+                            ),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'A imagem deve ser tirada a aproximadamente 15 cm de altura, com boa iluminação e fundo preto.',
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.grey[800],
+                              height: 1.4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
               AppImageUpload(
                 label: 'Imagem',
                 imageBytes: _imageBytes,
