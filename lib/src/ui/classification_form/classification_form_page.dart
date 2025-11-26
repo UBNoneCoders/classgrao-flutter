@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:classgrao/src/core/widgets/app_bottom_navigate.dart';
@@ -39,7 +40,7 @@ class _ClassificationFormPageState
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text('Enviado para análise com sucesso!'),
-                backgroundColor: Color(0xFF00695C),
+                backgroundColor: Colors.green,
               ),
             );
             _clearForm();
@@ -61,20 +62,42 @@ class _ClassificationFormPageState
       FilePickerResult? result = await FilePicker.platform.pickFiles(
         type: FileType.image,
         allowMultiple: false,
+        withData: true,
       );
 
       if (result != null && result.files.isNotEmpty) {
         final file = result.files.first;
 
-        if (file.bytes == null || file.name.isEmpty) {
+        if (file.name.isEmpty) {
           setState(() {
             _imageError = 'Arquivo inválido. Selecione uma imagem válida.';
           });
           return;
         }
 
+        Uint8List? bytes = file.bytes;
+
+        if (bytes == null && file.path != null) {
+          try {
+            final fileBytes = await File(file.path!).readAsBytes();
+            bytes = Uint8List.fromList(fileBytes);
+          } catch (e) {
+            setState(() {
+              _imageError = 'Erro ao ler o arquivo da imagem';
+            });
+            return;
+          }
+        }
+
+        if (bytes == null) {
+          setState(() {
+            _imageError = 'Não foi possível carregar a imagem';
+          });
+          return;
+        }
+
         setState(() {
-          _imageBytes = file.bytes;
+          _imageBytes = bytes;
           _imageName = file.name;
           _imageError = null;
         });
