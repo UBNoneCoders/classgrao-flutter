@@ -1,20 +1,22 @@
 import 'package:classgrao/src/core/config/env.dart';
 import 'package:flutter/material.dart';
 
-class AnalysisCard extends StatelessWidget {
+class ClassificationCard extends StatelessWidget {
   final String title;
   final String date;
   final String status;
   final VoidCallback onTap;
   final String imagePath;
+  final double goodGrainsPercentage;
 
-  const AnalysisCard({
+  const ClassificationCard({
     super.key,
     required this.title,
     required this.date,
     required this.status,
     required this.onTap,
     required this.imagePath,
+    required this.goodGrainsPercentage,
   });
 
   String get imageUrl {
@@ -105,11 +107,13 @@ class AnalysisCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        isActive ? 'Apto' : 'Inapto',
+        goodGrainsPercentage > 50.00 ? 'Apto' : 'Inapto',
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w600,
-          color: isActive ? const Color(0xFF4CAF50) : const Color(0xFFFF9800),
+          color: goodGrainsPercentage > 50.00
+              ? const Color(0xFF4CAF50)
+              : const Color(0xFFFF9800),
         ),
       ),
     );

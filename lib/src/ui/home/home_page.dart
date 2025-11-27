@@ -1,4 +1,4 @@
-import 'package:classgrao/src/core/widgets/analysis_list.dart';
+import 'package:classgrao/src/core/widgets/classification_list.dart';
 import 'package:classgrao/src/core/widgets/app_bottom_navigate.dart';
 import 'package:classgrao/src/core/widgets/home_app_bar.dart';
 import 'package:classgrao/src/data/services/auth/auth_service.dart';
@@ -89,7 +89,7 @@ class _HomePageState extends ConsumerState<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    AnalysisList(classifications: classifications),
+                    ClassificationList(classifications: classifications),
                   ],
                 ),
               ),

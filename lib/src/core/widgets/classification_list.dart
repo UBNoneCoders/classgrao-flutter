@@ -1,12 +1,12 @@
-import 'package:classgrao/src/core/widgets/analysis_card.dart';
+import 'package:classgrao/src/core/widgets/classification_card.dart';
 import 'package:classgrao/src/data/models/classification_model.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class AnalysisList extends StatelessWidget {
+class ClassificationList extends StatelessWidget {
   final List<ClassificationModel> classifications;
 
-  const AnalysisList({
+  const ClassificationList({
     super.key,
     required this.classifications,
   });
@@ -63,7 +63,7 @@ class AnalysisList extends StatelessWidget {
       children: classifications.map((classification) {
         return Padding(
           padding: const EdgeInsets.only(bottom: 12),
-          child: AnalysisCard(
+          child: ClassificationCard(
             title: classification.title,
             date: _formatDate(classification.createdAt),
             status: _getStatus(classification.hasClassificated),
@@ -75,6 +75,7 @@ class AnalysisList extends StatelessWidget {
               );
             },
             imagePath: classification.imagePath ?? '',
+            goodGrainsPercentage: classification.result?.goodGrainsPercentage ?? 0,
           ),
         );
       }).toList(),
