@@ -227,31 +227,24 @@ class AccountPage extends ConsumerWidget {
               onPressed: () async {
                 Navigator.pop(dialogContext);
 
-                final viewModel = ref.read(accountViewModelProvider.notifier);
-                final result = await viewModel.logout();
+                final authService = ref.read(authServiceProvider);
+                await authService.logout();
+
+                ref.invalidate(isAuthenticatedProvider);
+                ref.invalidate(currentUserProvider);
 
                 if (context.mounted) {
-                  switch (result) {
-                    case Success():
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Sessão encerrada com sucesso!'),
-                          backgroundColor: Colors.green,
-                        ),
-                      );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Sessão encerrada com sucesso!'),
+                      backgroundColor: Colors.green,
+                    ),
+                  );
 
-                      Navigator.of(context).pushAndRemoveUntil(
-                        MaterialPageRoute(builder: (_) => const LoginPage()),
-                        (route) => false,
-                      );
-                    case Failure(error: final error):
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Erro ao fazer logout: $error'),
-                          backgroundColor: Colors.red,
-                        ),
-                      );
-                  }
+                  Navigator.of(context).pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (_) => const LoginPage()),
+                    (route) => false,
+                  );
                 }
               },
               style: TextButton.styleFrom(
