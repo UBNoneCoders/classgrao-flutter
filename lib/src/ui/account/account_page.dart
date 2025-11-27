@@ -1,5 +1,7 @@
+import 'package:classgrao/src/core/result/result.dart';
 import 'package:classgrao/src/core/widgets/app_bottom_navigate.dart';
 import 'package:classgrao/src/data/services/auth/auth_service.dart';
+import 'package:classgrao/src/ui/account/account_view_model.dart';
 import 'package:classgrao/src/ui/login/login_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -167,6 +169,36 @@ class AccountPage extends ConsumerWidget {
             TextButton(
               onPressed: () async {
                 Navigator.pop(dialogContext);
+
+                final user = await ref.read(currentUserProvider.future);
+                if (user == null) return;
+
+                final viewModel = ref.read(accountViewModelProvider.notifier);
+                final result = await viewModel.deleteAccount(user.id);
+
+                if (context.mounted) {
+                  switch (result) {
+                    case Success():
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Conta deletada com sucesso!'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
+
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                        (route) => false,
+                      );
+                    case Failure(error: final error):
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Erro ao deletar conta: $error'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                  }
+                }
               },
               style: TextButton.styleFrom(foregroundColor: Colors.red),
               child: const Text('Deletar'),
@@ -195,24 +227,31 @@ class AccountPage extends ConsumerWidget {
               onPressed: () async {
                 Navigator.pop(dialogContext);
 
-                final authService = ref.read(authServiceProvider);
-                await authService.logout();
-
-                ref.invalidate(isAuthenticatedProvider);
-                ref.invalidate(currentUserProvider);
+                final viewModel = ref.read(accountViewModelProvider.notifier);
+                final result = await viewModel.logout();
 
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Sessão encerrada com sucesso!'),
-                      backgroundColor: Colors.green,
-                    ),
-                  );
+                  switch (result) {
+                    case Success():
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Sessão encerrada com sucesso!'),
+                          backgroundColor: Colors.green,
+                        ),
+                      );
 
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(builder: (_) => const LoginPage()),
-                    (route) => false,
-                  );
+                      Navigator.of(context).pushAndRemoveUntil(
+                        MaterialPageRoute(builder: (_) => const LoginPage()),
+                        (route) => false,
+                      );
+                    case Failure(error: final error):
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('Erro ao fazer logout: $error'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                  }
                 }
               },
               style: TextButton.styleFrom(

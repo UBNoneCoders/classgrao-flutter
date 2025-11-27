@@ -1,11 +1,10 @@
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:classgrao/src/core/rest_client/rest_client_provider.dart';
 import 'package:classgrao/src/core/result/result.dart';
 import 'package:classgrao/src/data/models/classification_model.dart';
+import 'package:dio/dio.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'classification_repository.g.dart';
 
@@ -79,6 +78,37 @@ class ClassificationRepository {
       );
 
       return Success(classification);
+    } catch (e) {
+      return Failure(Exception(e.toString()));
+    }
+  }
+
+  Future<Result<ClassificationModel>> reprocess(int id) async {
+    try {
+      final response = await _dio.post('/classifications/$id/reprocess');
+
+      final classification = ClassificationModel.fromJson(
+        response.data['data']['classification'],
+      );
+
+      return Success(classification);
+    } catch (e) {
+      return Failure(Exception(e.toString()));
+    }
+  }
+
+  Future<Result<Uint8List>> downloadReport(int id) async {
+    try {
+      final response = await _dio.get(
+        '/classifications/$id/report',
+        options: Options(responseType: ResponseType.bytes),
+      );
+
+      final bytes = response.data is Uint8List
+          ? response.data as Uint8List
+          : Uint8List.fromList(List<int>.from(response.data));
+
+      return Success(bytes);
     } catch (e) {
       return Failure(Exception(e.toString()));
     }

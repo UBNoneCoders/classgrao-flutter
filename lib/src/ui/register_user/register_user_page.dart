@@ -1,5 +1,7 @@
+import 'package:classgrao/src/core/result/result.dart';
 import 'package:classgrao/src/core/widgets/app_button.dart';
 import 'package:classgrao/src/core/widgets/app_input.dart';
+import 'package:classgrao/src/ui/register_user/register_user_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -111,10 +113,33 @@ class _RegisterUserPageState extends ConsumerState<RegisterUserPage> {
 
   void _registerUser() async {
     if (_formKey.currentState!.validate()) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usuário cadastrado com sucesso')),
+      final viewModel = ref.read(registerUserViewModelProvider.notifier);
+
+      final result = await viewModel.registerUser(
+        name: _nameController.text,
+        username: _usernameController.text,
+        password: _passwordController.text,
       );
-      Navigator.pop(context);
+
+      if (mounted) {
+        switch (result) {
+          case Success():
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Usuário cadastrado com sucesso'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.pop(context);
+          case Failure(error: final error):
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Erro ao cadastrar usuário: $error'),
+                backgroundColor: Colors.red,
+              ),
+            );
+        }
+      }
     }
   }
 }

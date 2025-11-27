@@ -1,8 +1,11 @@
 import 'package:classgrao/src/core/config/env.dart';
 import 'package:classgrao/src/data/models/classification_model.dart';
+import 'package:classgrao/src/ui/classification_details/classification_details_view_model.dart';
+import 'package:classgrao/src/ui/home/home_view_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ClassificationDetailsPage extends StatelessWidget {
+class ClassificationDetailsPage extends ConsumerWidget {
   final ClassificationModel classification;
 
   const ClassificationDetailsPage({
@@ -26,29 +29,61 @@ class ClassificationDetailsPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final viewModel = ref.watch(classificationDetailsViewModelProvider);
+
+    ref.listen<ClassificationDetailsState>(
+      classificationDetailsViewModelProvider,
+      (previous, next) {
+        if (next.errorMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(next.errorMessage!),
+              backgroundColor: Colors.red,
+            ),
+          );
+          ref
+              .read(classificationDetailsViewModelProvider.notifier)
+              .clearMessages();
+        }
+        if (next.successMessage != null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(next.successMessage!),
+              backgroundColor: Colors.green,
+            ),
+          );
+          ref
+              .read(classificationDetailsViewModelProvider.notifier)
+              .clearMessages();
+        }
+      },
+    );
+
     return Scaffold(
       backgroundColor: Colors.grey[200],
-      appBar: _buildAppBar(context),
-      body: Column(
-        children: [
-          Expanded(
-            flex: 2,
-            child: _ClassificationImage(imageUrl: imageUrl),
-          ),
-          Expanded(
-            flex: 3,
-            child: _DetailsCard(
-              classification: classification,
-              resultImageUrl: resultImageUrl,
+      appBar: _buildAppBar(context, ref),
+      body: viewModel.isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : Column(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: _ClassificationImage(imageUrl: imageUrl),
+                ),
+                Expanded(
+                  flex: 3,
+                  child: _DetailsCard(
+                    classification: classification,
+                    resultImageUrl: resultImageUrl,
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 
-  PreferredSizeWidget _buildAppBar(BuildContext context) {
+  PreferredSizeWidget _buildAppBar(BuildContext context, WidgetRef ref) {
     return AppBar(
       backgroundColor: Colors.grey[200],
       elevation: 0,
@@ -64,7 +99,142 @@ class ClassificationDetailsPage extends StatelessWidget {
           fontWeight: FontWeight.w400,
         ),
       ),
+      actions: [
+        PopupMenuButton<String>(
+          icon: const Icon(Icons.more_vert, color: Colors.black),
+          onSelected: (value) async {
+            if (value == 'reprocess') {
+              await _handleReprocess(context, ref);
+            } else if (value == 'download') {
+              await _handleDownloadReport(context, ref);
+            } else if (value == 'delete') {
+              await _handleDelete(context, ref);
+            }
+          },
+          itemBuilder: (context) => [
+            const PopupMenuItem(
+              value: 'reprocess',
+              child: Row(
+                children: [
+                  Icon(Icons.refresh, color: Colors.blue),
+                  SizedBox(width: 8),
+                  Text('Reenviar para análise'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'download',
+              child: Row(
+                children: [
+                  Icon(Icons.download, color: Colors.green),
+                  SizedBox(width: 8),
+                  Text('Baixar relatório'),
+                ],
+              ),
+            ),
+            const PopupMenuItem(
+              value: 'delete',
+              child: Row(
+                children: [
+                  Icon(Icons.delete, color: Colors.red),
+                  SizedBox(width: 8),
+                  Text('Deletar'),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ],
     );
+  }
+
+  Future<void> _handleReprocess(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Reprocessar Análise'),
+        content: const Text(
+          'Deseja reenviar esta classificação para análise?',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Reprocessar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    final viewModel = ref.read(classificationDetailsViewModelProvider.notifier);
+    final success = await viewModel.reprocessClassification(classification.id);
+
+    if (!context.mounted) return;
+
+    if (success) {
+      ref.invalidate(homeViewModelProvider);
+      Navigator.pop(context, true);
+    }
+  }
+
+  Future<void> _handleDownloadReport(
+    BuildContext context,
+    WidgetRef ref,
+  ) async {
+    final viewModel = ref.read(classificationDetailsViewModelProvider.notifier);
+    final result = await viewModel.downloadReport(classification.id);
+
+    if (!context.mounted) return;
+
+    if (result.isSuccess && result.bytes != null) {
+      await viewModel.saveReportToFile(
+        result.bytes!,
+        classification.title,
+      );
+    }
+  }
+
+  Future<void> _handleDelete(BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Deletar Classificação'),
+        content: const Text(
+          'Tem certeza que deseja deletar esta classificação? Esta ação não pode ser desfeita.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancelar'),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+              foregroundColor: Colors.white,
+            ),
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('Deletar'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !context.mounted) return;
+
+    final viewModel = ref.read(classificationDetailsViewModelProvider.notifier);
+    final success = await viewModel.deleteClassification(classification.id);
+
+    if (!context.mounted) return;
+
+    if (success) {
+      ref.invalidate(homeViewModelProvider);
+      Navigator.pop(context, true);
+    }
   }
 }
 
@@ -192,7 +362,7 @@ class _ClassificationHeader extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          classification.title ?? 'Sem título',
+          classification.title,
           style: const TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.bold,
